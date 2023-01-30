@@ -16,7 +16,6 @@ class ImageSearch extends Component {
     articles: [],
     loading: false,
     error: null,
-    perPage: 12,
     totalHits: '',
     showModal: false,
     largeImageURL: null,
@@ -28,16 +27,18 @@ class ImageSearch extends Component {
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    const { search, page, perPage } = this.state;
+    const { search, page } = this.state;
 
     if (prevState.search !== search || prevState.page !== page) {
       try {
         this.setState({ loading: true });
         const response = await axios.get(
-          `?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
+          `?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
         );
         this.setState({ totalHits: response.data.totalHits });
-        this.setState({ articles: response.data.hits });
+        this.setState({
+          articles: [...prevState.articles, ...response.data.hits],
+        });
       } catch (error) {
         this.setState({ error });
       } finally {
@@ -63,9 +64,8 @@ class ImageSearch extends Component {
   };
 
   loadMore = () => {
-    this.setState(({ page, perPage }) => ({
+    this.setState(({ page }) => ({
       page: page + 1,
-      perPage: perPage * 2,
     }));
   };
 

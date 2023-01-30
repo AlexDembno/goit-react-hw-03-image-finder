@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import styles from './ImageGalleryItem.module.css';
 
 function ImageGalleryItem({ webURL, tags }) {
@@ -9,3 +10,8 @@ function ImageGalleryItem({ webURL, tags }) {
 }
 
 export default ImageGalleryItem;
+
+ImageGalleryItem.propTypes = {
+  webURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+};

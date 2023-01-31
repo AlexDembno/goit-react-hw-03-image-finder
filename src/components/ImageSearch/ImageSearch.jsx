@@ -7,7 +7,6 @@ import Loader from 'components/Loader/Loader';
 import Button from 'components/Button/Button';
 import Modal from 'components/Modal/Modal';
 
-const KEY = '31934328-4f49ab69ab8cdfa2acbd8f5df';
 axios.defaults.baseURL = `https://pixabay.com/api/`;
 class ImageSearch extends Component {
   state = {
@@ -23,22 +22,29 @@ class ImageSearch extends Component {
   };
 
   searchImages = ({ search }) => {
-    this.setState({ search });
+    this.setState({ search, articles: [], page: 1 });
   };
 
   async componentDidUpdate(prevProps, prevState) {
     const { search, page } = this.state;
 
-    if (prevState.search !== search || prevState.page !== page) {
+    if (search !== prevState.search || prevState.page !== page) {
       try {
         this.setState({ loading: true });
-        const response = await axios.get(
-          `?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`
-        );
-        this.setState({ totalHits: response.data.totalHits });
-        this.setState({
-          articles: [...prevState.articles, ...response.data.hits],
+        const response = await axios.get('/', {
+          params: {
+            key: '31934328-4f49ab69ab8cdfa2acbd8f5df',
+            q: search,
+            page,
+            per_page: 12,
+            image_type: 'photo',
+            orientation: 'horizontal',
+          },
         });
+        this.setState({ totalHits: response.data.totalHits });
+        this.setState(prevState => ({
+          articles: [...prevState.articles, ...response.data.hits],
+        }));
       } catch (error) {
         this.setState({ error });
       } finally {
